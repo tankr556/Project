@@ -22,9 +22,17 @@ router.get("/cart", uauth, async (req, resp) => {
     try {
         const cartdata = await Cart.aggregate([{ $match: { uid: uid } }, { $lookup: { from: 'products', localField: 'pid', foreignField: '_id', as: 'products' } }])
         //console.log(cartdata);
-        resp.render("cart", { cartd: cartdata })
+        // resp.render("cart", { cartd: cartdata })
+        let sum = 0;
+        for (var i = 0; i < cartdata.length; i++) {
+            sum = sum + cartdata[i].total;
+
+        }
+       // console.log(sum);
+        resp.render("cart", { cartd: cartdata, carttotal: sum })
+
     } catch (error) {
-        console.log(error);
+
     }
     //resp.render("cart")
 })
@@ -98,16 +106,29 @@ router.post("/login", async (req, resp) => {
 })
 router.get("/addtocart", uauth, async (req, resp) => {
     const pid = req.query.pid
-    // console.log(pid);
+    //console.log(pid);
     const uid = req.user._id
-    // console.log(uid);
+    //console.log(uid);
     try {
-        const cart = new Cart({
-            pid: pid,
-            uid: uid
+        const allCartProduct = await Cart.find({ uid: uid })
+        const productdata = await Product.findOne({ _id: pid });
+        const duplicate = allCartProduct.find(ele => {
+            return ele.pid == pid
         })
-        await cart.save();
-        resp.send("product added into cart")
+        if (duplicate) {
+            resp.send("Product alredy exist in cart !!!")
+
+        }
+        else {
+            const cart = new Cart({
+                pid: pid,
+                uid: uid,
+                total: productdata.price
+            })
+
+            await cart.save();
+            resp.send("product added into cart")
+        }
     } catch (error) {
         console.log(error);
     }
@@ -121,5 +142,22 @@ router.get("/deletetocart", uauth, async (req, resp) => {
         console.log(error);
     }
 })
+
+router.get("/changeCartQty", uauth, async (req, resp) => {
+    try {
+        const cartid = req.query.cartid;
+        const cartProduct = await Cart.findOne({ _id: cartid })
+        const productdata = await Product.findOne({ _id: cartProduct.pid })
+        const newqty = Number(cartProduct.qty) + Number(req.query.qty)
+        const newtotal = newqty * productdata.price;
+        console.log(newtotal);
+        const updatedata = await Cart.findByIdAndUpdate(cartid, { qty: newqty, total: newtotal })
+        resp.send("ok")
+    } catch (error) {
+        console.log(error);
+    }
+})
+
+
 
 module.exports = router
