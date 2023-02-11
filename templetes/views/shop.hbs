@@ -110,12 +110,15 @@
 										</div>
 									</div>
 									<p class="bottom-area d-flex px-3">
-										<a href="addtoCart?pid={{this._id}}"
+										<li class="add-to-cart text-center py-2 mr-1"><span>Add to cart <i
+													class="ion-ios-add ml-1"
+													onclick="addtoCart('{{this._id}}')"></i></span></li>
+										{{!-- <a href="addtoCart?pid={{this._id}}"
 											class="add-to-cart text-center py-2 mr-1"><span>Add to cart <i
 													class="ion-ios-add ml-1"
-													onclick="addtoCart('{{this._id}}')"></i></span></a>
-										<a href="#" class="buy-now text-center py-2">Buy now<span><i
-													class="ion-ios-cart ml-1"></i></span></a>
+													onclick="addtoCart('{{this._id}}')"></i></span></a> --}}
+										<li class="buy-now text-center py-2">Buy now<span><i
+													class="ion-ios-cart ml-1"></i></span></a></li>
 									</p>
 								</div>
 							</div>

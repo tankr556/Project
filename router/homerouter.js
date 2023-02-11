@@ -28,7 +28,7 @@ router.get("/cart", uauth, async (req, resp) => {
             sum = sum + cartdata[i].total;
 
         }
-       // console.log(sum);
+        // console.log(sum);
         resp.render("cart", { cartd: cartdata, carttotal: sum })
 
     } catch (error) {
@@ -102,6 +102,23 @@ router.post("/login", async (req, resp) => {
         }
     } catch (error) {
         resp.render("login", { msg: "Invalid email or password" })
+    }
+})
+
+router.get("/logout", uauth, async (req, resp) => {
+    try {
+        const user = req.user;
+        const token = req.token
+
+        user.Tokens = user.Tokens.filter(ele => {
+            return ele.token != token
+        })
+
+        await user.save();
+        resp.clearCookie("ujwt");
+        resp.render("index")
+    } catch (error) {
+        console.log(error);
     }
 })
 router.get("/addtocart", uauth, async (req, resp) => {
