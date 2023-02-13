@@ -41,6 +41,10 @@ router.get("/contact", (req, resp) => {
     resp.render("contact")
 })
 
+router.get("/checkout", (req, resp) => {
+    resp.render("checkout")
+})
+
 router.get("/productsingle", (req, resp) => {
     resp.render("product-single")
 })
@@ -173,6 +177,24 @@ router.get("/changeCartQty", uauth, async (req, resp) => {
     } catch (error) {
         console.log(error);
     }
+})
+
+const Razorpay = require('razorpay');
+router.get("/payment", (req, resp) => {
+
+    const amt = Number(req.query.amt);
+    console.log(amt);
+    var instance = new Razorpay({ key_id: 'rzp_test_WOONFY9u511Byr', key_secret: 't9ROVnSqZbzNZr59d3KLWzJO' })
+
+    var options = {
+        amount: amt * 100,  // amount in the smallest currency unit
+        currency: "INR",
+        receipt: "order_rcptid_11"
+    };
+    instance.orders.create(options, function (err, order) {
+        resp.send(order);
+    });
+
 })
 
 
