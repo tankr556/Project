@@ -180,6 +180,7 @@ router.get("/changeCartQty", uauth, async (req, resp) => {
 })
 
 const Razorpay = require('razorpay');
+const Order = require("../model/Order")
 router.get("/payment", (req, resp) => {
 
     const amt = Number(req.query.amt);
@@ -195,6 +196,33 @@ router.get("/payment", (req, resp) => {
         resp.send(order);
     });
 
+})
+
+router.get("/order", uauth, async (req, resp) => {
+    const pid = req.query.pid;
+    console.log(pid);
+    const user = req.user
+    const cartProduct = await Cart.find({ uid: user._id })
+
+    var prod = [];
+    for (var i = 0; i < cartProduct.length; i++) {
+        prod[i] = {
+            pid: cartProduct[i].pid,
+            qty: cartProduct[i].qty
+        }
+    }
+    console.log(prod);
+    try {
+        const or = new Order({
+            pid: pid,
+            uid: user._id,
+            product: prod
+        })
+        await or.save()
+        resp.send("Your order confirmed")
+    } catch (error) {
+
+    }
 })
 
 

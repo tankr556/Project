@@ -152,4 +152,24 @@ router.get("/deleteuser", auth, async (req, resp) => {
         console.log(error);
     }
 })
+
+//******************Order*********************/
+const Order = require("../model/Order")
+router.get("/vieworder", async (req, resp) => {
+    try {
+        const order = await Order.find();
+        resp.render("orderdetail", { odata: order })
+    } catch (error) {
+
+    }
+})
+router.get("/deleteorder", auth, async (req, resp) => {
+    try {
+        const _id = req.query.did;
+        await User.findByIdAndDelete(_id)
+        resp.redirect("vieworder")
+    } catch (error) {
+        console.log(error);
+    }
+})
 module.exports = router

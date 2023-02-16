@@ -341,6 +341,14 @@
 	<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 	<script>
 
+		function order(pid, oid, sign) {
+			$.get("order", { pid, oid, sign }, function (rt) {
+				alert(rt)
+			})
+		}
+
+
+
 		document.getElementById('rzp-button1').onclick = function (e) {
 			const amt = document.getElementById("cartamt").innerText
 			//console.log(amt)
@@ -358,9 +366,7 @@
 					"image": "images/person_1.jpg",
 					"order_id": data.id, //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
 					"handler": function (response) {
-						alert(response.razorpay_payment_id);
-						alert(response.razorpay_order_id);
-						alert(response.razorpay_signature)
+						order(response.razorpay_payment_id, response.razorpay_order_id, response.razorpay_signature)
 					},
 					"notes": {
 						"address": "Razorpay Corporate Office"
